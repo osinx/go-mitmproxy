@@ -33,6 +33,7 @@ type Proxy struct {
 	shouldIntercept func(req *http.Request) bool              // req is received by proxy.server
 	upstreamProxy   func(req *http.Request) (*url.URL, error) // req is received by proxy.server, not client request
 	authProxy       func(res http.ResponseWriter, req *http.Request) (bool, error)
+	tlsConfig       *tls.Config
 }
 
 // proxy.server req context key
@@ -132,4 +133,8 @@ func (proxy *Proxy) getUpstreamConn(ctx context.Context, req *http.Request) (net
 
 func (proxy *Proxy) SetAuthProxy(fn func(res http.ResponseWriter, req *http.Request) (bool, error)) {
 	proxy.authProxy = fn
+}
+
+func (proxy *Proxy) SetTlsConfig(tlsConfig *tls.Config) {
+	proxy.tlsConfig = tlsConfig
 }

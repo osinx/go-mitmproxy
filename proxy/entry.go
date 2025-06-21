@@ -3,6 +3,7 @@ package proxy
 import (
 	"bufio"
 	"context"
+	"crypto/tls"
 	"io"
 	"net"
 	"net/http"
@@ -154,6 +155,11 @@ func (e *entry) start() error {
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
 		return err
+	}
+
+	if e.proxy.tlsConfig != nil {
+		log.Info("Proxy with tlsConfig")
+		ln = tls.NewListener(ln, e.proxy.tlsConfig)
 	}
 
 	log.Infof("Proxy start listen at %v\n", e.server.Addr)
