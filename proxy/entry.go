@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/lqqyt2423/go-mitmproxy/internal/helper"
+	"github.com/mastercactapus/proxyprotocol"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -160,6 +161,10 @@ func (e *entry) start() error {
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
 		return err
+	}
+
+	if e.proxy.proxyProtocol {
+		ln = proxyprotocol.NewListener(ln, 0)
 	}
 
 	if e.proxy.tlsConfig != nil {
