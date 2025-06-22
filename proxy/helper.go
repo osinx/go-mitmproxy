@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io"
 	"net"
@@ -60,7 +61,11 @@ func transfer(log *log.Entry, server, client io.ReadWriteCloser) {
 		server.Close()
 
 		if clientConn, ok := client.(*wrapClientConn); ok {
-			err := clientConn.Conn.(*net.TCPConn).CloseRead()
+			if tcpConn, ok := clientConn.Conn.(*net.TCPConn); ok {
+				err = tcpConn.CloseRead()
+			} else {
+				err = clientConn.Conn.(*tls.Conn).Close()
+			}
 			log.Debugln("clientConn.Conn.(*net.TCPConn).CloseRead()", err)
 		}
 

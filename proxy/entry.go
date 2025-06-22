@@ -119,7 +119,12 @@ func (c *wrapServerConn) Close() error {
 	}
 
 	if !c.connCtx.ClientConn.Tls {
-		c.connCtx.ClientConn.Conn.(*wrapClientConn).Conn.(*net.TCPConn).CloseRead()
+		conn := c.connCtx.ClientConn.Conn.(*wrapClientConn).Conn
+		if tcpConn, ok := conn.(*net.TCPConn); ok {
+			tcpConn.Close()
+		} else {
+			conn.(*tls.Conn).Close()
+		}
 	} else {
 		// if keep-alive connection close
 		if !c.connCtx.closeAfterResponse {
