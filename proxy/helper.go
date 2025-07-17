@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -90,4 +91,9 @@ func httpError(w http.ResponseWriter, error string, code int) {
 	w.Header().Set("Proxy-Authenticate", `Basic realm="proxy"`) // Indicates that the proxy server requires client credentials
 	w.WriteHeader(code)
 	fmt.Fprintln(w, error)
+}
+
+func portOnly(hostPort string) (int, error) {
+	_, port, _ := net.SplitHostPort(hostPort)
+	return strconv.Atoi(port)
 }

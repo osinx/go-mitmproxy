@@ -191,6 +191,12 @@ func (e *entry) shutdown(ctx context.Context) error {
 func (e *entry) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	proxy := e.proxy
 
+	// fix
+	if req.URL.Scheme == "" {
+		req.URL.Scheme = "http"
+		req.URL.Host = req.Host
+	}
+
 	log := log.WithFields(log.Fields{
 		"in":   "Proxy.entry.ServeHTTP",
 		"host": req.Host,
@@ -252,6 +258,23 @@ func (e *entry) handleConnect(res http.ResponseWriter, req *http.Request) {
 	if !shouldIntercept {
 		log.Debugf("begin transpond %v", req.Host)
 		e.directTransfer(res, req, f)
+		return
+	}
+
+	if proxy.shouldIntercept != nil {
+		port, err := portOnly(req.URL.Host)
+		if err != nil {
+			return
+		}
+		if port != 443 {
+			log.Debugln("interceptConnectHTTP")
+			err := interceptConnectHTTP(res, req, e)
+			if err == nil {
+				return
+			} else {
+				//log.Errorf("interceptConnectHTTP: %v", err)
+			}
+		}
 		return
 	}
 
