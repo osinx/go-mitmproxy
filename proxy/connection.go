@@ -84,6 +84,7 @@ type ConnContext struct {
 	proxy              *Proxy
 	closeAfterResponse bool                        // after http response, http server will close the connection
 	dialFn             func(context.Context) error // when begin request, if there no ServerConn, use this func to dial
+	ProxyAuth          string
 }
 
 func newConnContext(c net.Conn, proxy *Proxy) *ConnContext {

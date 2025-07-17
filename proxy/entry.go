@@ -267,6 +267,7 @@ func (e *entry) handleConnect(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		if port != 443 {
+			f.ConnContext.ProxyAuth = req.Header.Get("Proxy-Authorization")
 			log.Debugln("interceptConnectHTTP")
 			err := interceptConnectHTTP(res, req, e)
 			if err == nil {

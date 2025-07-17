@@ -34,6 +34,9 @@ func interceptConnectHTTP(res http.ResponseWriter, req *http.Request, e *entry) 
 	srv := &http.Server{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			r = r.WithContext(context.WithValue(r.Context(), connContextKey, cc))
+			if cc.ProxyAuth != "" {
+				r.Header.Set("Proxy-Authorization", cc.ProxyAuth)
+			}
 			e.ServeHTTP(w, r)
 		}),
 		//ErrorLog: log.New(io.Discard, "", 0),
