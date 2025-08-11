@@ -275,8 +275,8 @@ func (e *entry) handleConnect(res http.ResponseWriter, req *http.Request) {
 			} else {
 				//log.Errorf("interceptConnectHTTP: %v", err)
 			}
+			return
 		}
-		return
 	}
 
 	if f.ConnContext.ClientConn.UpstreamCert {
