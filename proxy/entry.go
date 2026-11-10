@@ -122,9 +122,8 @@ func (c *wrapServerConn) Close() error {
 	if !c.connCtx.ClientConn.Tls {
 		conn := c.connCtx.ClientConn.Conn.(*wrapClientConn).Conn
 		if tcpConn, ok := conn.(*net.TCPConn); ok {
-			tcpConn.Close()
-		} else {
-			conn.(*tls.Conn).Close()
+			// Leave the write side open until the HTTP response is flushed.
+			tcpConn.CloseRead()
 		}
 	} else {
 		// if keep-alive connection close

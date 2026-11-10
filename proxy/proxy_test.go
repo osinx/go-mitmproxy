@@ -318,7 +318,8 @@ func TestProxy(t *testing.T) {
 				testSendRequest(t, httpEndpoint+"intercept-request", proxyClient, "intercept-request")
 			})
 			t.Run("https can't", func(t *testing.T) {
-				httpsEndpoint := "https://some-wrong-host/"
+				// Use a local unreachable endpoint; VPN DNS may resolve made-up names.
+				httpsEndpoint := "https://127.0.0.1:0/"
 				_, err := http.Get(httpsEndpoint + "intercept-request")
 				if err == nil {
 					t.Fatal("should have error")

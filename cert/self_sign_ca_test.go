@@ -18,7 +18,7 @@ func TestGetStorePath(t *testing.T) {
 }
 
 func TestNewCA(t *testing.T) {
-	caApi, err := NewSelfSignCA("")
+	caApi, err := NewSelfSignCA(t.TempDir())
 	if err != nil {
 		t.Fatal(err)
 	}
